@@ -1,6 +1,45 @@
 <h1>Hello world!</h1>
 
+<ul id="messages"></ul>
+
+<form id="comment-form">
+    <input id="comment" name="author" placeholder="author"/>
+    <input id="author" name="comment" placeholder="comment"/>
+    <button type="submit">Enviar</button>
+</form>
+
 <script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
     const socket = io('http://localhost:3000');
+
+    const messageForm = document.getElementById('comment-form');
+
+    messageForm.onsubmit = function (event) {
+        event.preventDefault()
+
+        const author = document.getElementById('author').value;
+        const comment = document.getElementById('comment').value;
+        const data = {author, comment};
+
+        socket.emit('sendMessage', data);
+        
+    }
+
+    const messageList = document.getElementById('messages');
+
+    const renderMessage = (message) => {
+            console.log(message)
+            const element = document.createElement('li');
+            element.innerHTML = `<strong>${message.author}</strong>: ${message.comment}`;
+            console.log(element)
+            messageList.append(element);
+        }
+
+    socket.on('mensageForAll', receiveContent => {
+        renderMessage(receiveContent);
+    })
+    socket.on('mensageForUser', receiverUser => {
+        renderMessage(receiverUser);
+    })
+
 </script>

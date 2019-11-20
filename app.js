@@ -19,3 +19,10 @@ app.get('/', (req, res) => {
 http.listen(3000, () => {
   console.log('Listening on port 3000')
 })
+
+io.on('connection', (socket) => {
+  socket.on('sendMessage', sendMessage => {
+    socket.emit('mensageForUser', sendMessage);
+    socket.broadcast.emit('mensageForAll', sendMessage)
+  })
+})
